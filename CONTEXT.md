@@ -466,6 +466,40 @@ skinmatch-ai/
 
 ---
 
-*Last updated: May 25, 2026 — Sesi 3*
+---
+
+### Sesi 4 — 26 Mei 2026
+
+**Status: Deployed ke Vercel + GitHub auto-deploy aktif ✅**
+
+#### Selesai
+- [x] Git init + commit awal (29 files, branch `main`)
+- [x] Vercel CLI install + `vercel --prod` → project live
+- [x] Env vars diimport ke Vercel dashboard (semua 7 variabel)
+- [x] Push ke GitHub: `https://github.com/Zenidp/skinmatch-ai`
+- [x] GitHub → Vercel auto-deploy connected (setiap push ke `main` → auto deploy)
+- [x] Fix mobile upload: foto Android/iPhone dikonversi ke JPEG via canvas (resize max 1920px)
+- [x] End-to-end test dari HP berhasil ✅
+
+#### Belum dikerjakan (Next Session)
+- [ ] Register di DevPost untuk ketiga sponsor challenge
+- [ ] Demo video (1–3 menit)
+
+---
+
+## 14. Catatan Sesi Terakhir
+
+**Sesi: 26 Mei 2026 (Sesi 4)**
+
+- Git user: `zenidp` / `duhaperbangga@gmail.com`
+- GitHub repo: `https://github.com/Zenidp/skinmatch-ai` (kapital Z, GitHub auto-redirect dari lowercase)
+- Vercel auto-deploy: connected ke branch `main` — setiap push langsung deploy
+- Env vars Vercel: import via dashboard (paste .env.local) lebih mudah dari CLI satu-satu
+- `CRUSOE_API_KEY` di `.env.local` pakai `\$` (escape shell), tapi di Vercel input `$` biasa
+- `TRUEFOUNDRY_MODEL_ID` format wajib `skinmatch-ai/skinmatch-routine` (group/model)
+- Mobile upload fix: `canvas.toDataURL("image/jpeg", 0.85)` normalize semua format → JPEG, resize max 1920px
+- `.next/trace` sempat dimiliki root → perlu `sudo rm -rf .next` jika build gagal permission
+
+*Last updated: May 26, 2026 — Sesi 4*
 *Hackathon: DevNetwork [AI + ML] Hackathon 2026*
 *Challenges: Perfect Corp + Crusoe + TrueFoundry*
