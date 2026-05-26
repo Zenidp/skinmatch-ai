@@ -20,6 +20,7 @@ export type SkinAnalysisResult = {
   concerns: SkinConcern[];
   scores: Record<string, number>;
   source: "perfectcorp";
+  _debug_raw?: Record<string, { ui_score: number; raw_score: number }> | null;
 };
 
 // Concerns to request from Perfect Corp (SD actions — valid for images with short side >= 480px)
@@ -170,7 +171,12 @@ async function pollTask(apiKey: string, taskId: string): Promise<TaskData> {
     if (!data) throw new Error("Invalid poll response from Perfect Corp");
     if (data.task_status === "success") return data;
     if (data.task_status === "error") {
-      throw new Error(`Perfect Corp task failed: ${data.error ?? "unknown error"}`);
+      const code = data.error ?? "unknown";
+      if (code.includes("error_src_face") || code.includes("face"))
+        throw new Error("No face detected. Please use a clear, well-lit selfie facing the camera directly.");
+      if (code.includes("below_min") || code.includes("below_mi"))
+        throw new Error("Photo too small. Please use a higher resolution image (at least 480px).");
+      throw new Error(`Skin analysis failed: ${code}`);
     }
   }
 
@@ -293,5 +299,6 @@ export async function analyzeSkin(imageFile: File): Promise<SkinAnalysisResult> 
     concerns,
     scores,
     source: "perfectcorp",
+    _debug_raw: taskResult.results,
   };
 }
