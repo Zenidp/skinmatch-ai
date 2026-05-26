@@ -35,12 +35,40 @@ export default function CameraCapture() {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      setPreviewSrc(ev.target?.result as string);
+
+    const objectUrl = URL.createObjectURL(file);
+    const img = new Image();
+
+    img.onload = () => {
+      // Resize to max 1920px on longest side to keep file small
+      const MAX = 1920;
+      let { naturalWidth: w, naturalHeight: h } = img;
+      if (w > MAX || h > MAX) {
+        if (w >= h) { h = Math.round((h * MAX) / w); w = MAX; }
+        else { w = Math.round((w * MAX) / h); h = MAX; }
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
+      // Convert to JPEG — handles HEIC, WebP, PNG, etc.
+      setPreviewSrc(canvas.toDataURL("image/jpeg", 0.85));
       setMode("preview");
+      URL.revokeObjectURL(objectUrl);
     };
-    reader.readAsDataURL(file);
+
+    img.onerror = () => {
+      // Fallback: read as-is if canvas fails
+      URL.revokeObjectURL(objectUrl);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setPreviewSrc(ev.target?.result as string);
+        setMode("preview");
+      };
+      reader.readAsDataURL(file);
+    };
+
+    img.src = objectUrl;
   };
 
   const handleAnalyze = async () => {
