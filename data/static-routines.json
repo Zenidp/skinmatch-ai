@@ -1,0 +1,106 @@
+{
+  "oily": {
+    "morning": [
+      { "name": "Gentle Foaming Cleanser", "description": "Wash with a gel or foaming cleanser to remove overnight oil buildup without over-stripping.", "tip": "Use lukewarm water — hot water triggers more oil production." },
+      { "name": "Alcohol-Free Toner", "description": "Apply a balancing toner to minimize pores and prep skin for moisturizer." },
+      { "name": "Lightweight Serum (Niacinamide)", "description": "Apply 2-3 drops of niacinamide serum to control sebum and reduce pore appearance." },
+      { "name": "Oil-Free Moisturizer", "description": "Use a gel or water-based moisturizer — never skip this step even for oily skin." },
+      { "name": "Sunscreen SPF 30+", "description": "Apply a matte-finish or gel sunscreen — the most important step in any routine." }
+    ],
+    "night": [
+      { "name": "Double Cleanse", "description": "Start with a micellar water or cleansing balm, then follow with your foaming cleanser." },
+      { "name": "Exfoliating Toner (2-3x/week)", "description": "Use a BHA (salicylic acid) toner to unclog pores and reduce blackheads." },
+      { "name": "Spot Treatment", "description": "Apply a benzoyl peroxide or salicylic acid spot treatment to active breakouts only." },
+      { "name": "Lightweight Night Moisturizer", "description": "Apply a light, non-comedogenic moisturizer to repair the skin barrier overnight." }
+    ],
+    "products": [
+      { "name": "Hydrating Facial Cleanser", "brand": "CeraVe", "category": "cleanser", "price_range": "$", "why": "Gentle on oily skin, doesn't strip the barrier — ceramides keep skin balanced." },
+      { "name": "Niacinamide 10% + Zinc 1%", "brand": "The Ordinary", "category": "serum", "price_range": "$", "why": "Reduces sebum production and minimizes pore appearance — cult favorite for oily skin." },
+      { "name": "BHA Blackhead Power Liquid", "brand": "Cosrx", "category": "toner", "price_range": "$$", "why": "Salicylic acid exfoliates inside pores — perfect for oily, acne-prone skin." },
+      { "name": "AM Moisturizer SPF 30", "brand": "Neutrogena", "category": "sunscreen", "price_range": "$", "why": "Lightweight, matte-finish SPF that won't clog pores." }
+    ]
+  },
+  "dry": {
+    "morning": [
+      { "name": "Creamy Gentle Cleanser", "description": "Use a hydrating, non-foaming cleanser to preserve your skin's natural oils." },
+      { "name": "Hydrating Toner or Essence", "description": "Pat in a hydrating toner or essence to boost moisture levels before other products." },
+      { "name": "Hyaluronic Acid Serum", "description": "Apply on damp skin to draw moisture into the skin — the key step for dry skin." },
+      { "name": "Rich Moisturizer", "description": "Lock in hydration with a cream or balm-type moisturizer." },
+      { "name": "Sunscreen SPF 30+", "description": "Finish with a hydrating sunscreen — look for formulas with glycerin or hyaluronic acid." }
+    ],
+    "night": [
+      { "name": "Gentle Cleanser", "description": "Cleanse once in the evening — over-cleansing dries out skin further." },
+      { "name": "Hydrating Toner", "description": "Layer a hydrating toner to replenish moisture lost during the day." },
+      { "name": "Facial Oil or Serum", "description": "Apply a nourishing oil (rosehip, squalane) or hyaluronic acid serum." },
+      { "name": "Rich Night Cream", "description": "Use a thicker night cream to deeply repair the skin barrier as you sleep." },
+      { "name": "Lip Balm", "description": "Don't forget your lips — dry skin often affects the lip area too." }
+    ],
+    "products": [
+      { "name": "Hydrating Cream Cleanser", "brand": "CeraVe", "category": "cleanser", "price_range": "$", "why": "Creamy formula with hyaluronic acid that cleans without stripping dry skin." },
+      { "name": "Hyaluronic Acid 2% + B5", "brand": "The Ordinary", "category": "serum", "price_range": "$", "why": "Multi-weight hyaluronic acid pulls moisture into all skin layers." },
+      { "name": "Moisture Surge 72H", "brand": "Clinique", "category": "moisturizer", "price_range": "$$", "why": "Long-lasting hydration gel-cream loved by dry skin users worldwide." },
+      { "name": "Cicapair Tiger Grass Cream", "brand": "Dr.Jart+", "category": "moisturizer", "price_range": "$$", "why": "Centella asiatica repairs the moisture barrier while calming redness." }
+    ]
+  },
+  "combination": {
+    "morning": [
+      { "name": "Balanced Gel Cleanser", "description": "Use a mild gel cleanser that cleans the T-zone without over-drying cheeks." },
+      { "name": "Balancing Toner", "description": "Apply an alcohol-free toner to even out skin texture across both zones." },
+      { "name": "Lightweight Serum", "description": "Use a serum with niacinamide to balance oiliness while providing hydration." },
+      { "name": "Zone-Based Moisturizer", "description": "Apply a lighter moisturizer on the T-zone and a richer one on dry cheek areas." },
+      { "name": "Sunscreen SPF 30+", "description": "Use a lightweight, non-comedogenic sunscreen for the whole face." }
+    ],
+    "night": [
+      { "name": "Double Cleanse", "description": "Micellar water first to remove makeup, then your gel cleanser for the T-zone." },
+      { "name": "Niacinamide Toner", "description": "Balance sebum and pores with a niacinamide toner — works great for combination skin." },
+      { "name": "Targeted Serum", "description": "Apply a retinol or AHA serum 2-3x per week to smooth texture and even tone." },
+      { "name": "Night Cream", "description": "Use a medium-weight moisturizer — lightweight enough for the T-zone but nourishing for cheeks." }
+    ],
+    "products": [
+      { "name": "Foaming Cleanser", "brand": "La Roche-Posay", "category": "cleanser", "price_range": "$", "why": "Removes excess oil from T-zone without stripping the drier areas." },
+      { "name": "Niacinamide 10% + Zinc 1%", "brand": "The Ordinary", "category": "serum", "price_range": "$", "why": "Balances both oily and dry zones — ideal for combination skin." },
+      { "name": "Moisturizing Lotion", "brand": "CeraVe", "category": "moisturizer", "price_range": "$", "why": "Lightweight enough for the T-zone, hydrating enough for cheeks." },
+      { "name": "Sunscreen SPF 50", "brand": "Innisfree", "category": "sunscreen", "price_range": "$$", "why": "Lightweight K-beauty sunscreen with a non-greasy finish." }
+    ]
+  },
+  "sensitive": {
+    "morning": [
+      { "name": "Fragrance-Free Gentle Cleanser", "description": "Use a soap-free, fragrance-free cleanser — sensitive skin reacts easily to irritants." },
+      { "name": "Soothing Toner", "description": "Apply a calming toner with centella asiatica or aloe vera — avoid alcohol and fragrance." },
+      { "name": "Barrier-Repair Serum", "description": "Use a ceramide or niacinamide serum to strengthen the skin barrier." },
+      { "name": "Soothing Moisturizer", "description": "Apply a gentle, fragrance-free moisturizer with calming ingredients." },
+      { "name": "Mineral Sunscreen SPF 30+", "description": "Use a mineral (zinc oxide or titanium dioxide) sunscreen — less irritating than chemical filters." }
+    ],
+    "night": [
+      { "name": "Gentle Cleanser", "description": "Same gentle cleanser as morning — consistency is key for sensitive skin." },
+      { "name": "Calming Essence", "description": "Pat a centella or aloe essence to reduce redness and repair the barrier." },
+      { "name": "Ceramide Serum or Moisturizer", "description": "Repair your skin barrier with ceramide-rich products — sensitive skin loses moisture faster." },
+      { "name": "Occlusive Night Cream", "description": "Seal in all layers with a gentle, fragrance-free night cream." }
+    ],
+    "products": [
+      { "name": "Toleriane Hydrating Gentle Cleanser", "brand": "La Roche-Posay", "category": "cleanser", "price_range": "$", "why": "Designed specifically for sensitive skin — no fragrance, no soap, no irritants." },
+      { "name": "Cicapair Tiger Grass Serum", "brand": "Dr.Jart+", "category": "serum", "price_range": "$$", "why": "Centella asiatica calms redness and irritation for sensitive, reactive skin." },
+      { "name": "Moisturizing Cream", "brand": "CeraVe", "category": "moisturizer", "price_range": "$", "why": "Ceramide-based formula that restores and protects the skin barrier." },
+      { "name": "Mineral Sunscreen SPF 50", "brand": "EltaMD", "category": "sunscreen", "price_range": "$$$", "why": "Zinc oxide-only formula — gentlest option for reactive, sensitive skin." }
+    ]
+  },
+  "normal": {
+    "morning": [
+      { "name": "Gentle Cleanser", "description": "A mild cleanser to refresh skin without disrupting the balanced pH." },
+      { "name": "Vitamin C Serum", "description": "Brighten and protect with a vitamin C serum — great for normal skin's anti-aging defense." },
+      { "name": "Lightweight Moisturizer", "description": "Maintain your skin's natural balance with a light, everyday moisturizer." },
+      { "name": "Sunscreen SPF 30+", "description": "Protect your healthy skin — sunscreen is the single best anti-aging product." }
+    ],
+    "night": [
+      { "name": "Gentle Cleanser", "description": "Remove the day's buildup with your gentle cleanser." },
+      { "name": "Retinol Serum (2-3x/week)", "description": "Build collagen and refine texture with a low-dose retinol for normal skin." },
+      { "name": "Hydrating Night Cream", "description": "Replenish moisture while you sleep with a medium-weight night cream." }
+    ],
+    "products": [
+      { "name": "Gentle Skin Cleanser", "brand": "Cetaphil", "category": "cleanser", "price_range": "$", "why": "Classic gentle formula that works well for normal skin types." },
+      { "name": "Vitamin C Suspension 23%", "brand": "The Ordinary", "category": "serum", "price_range": "$", "why": "Affordable, effective vitamin C to brighten and protect normal skin." },
+      { "name": "Moisturizing Lotion", "brand": "CeraVe", "category": "moisturizer", "price_range": "$", "why": "Balanced formula that keeps normal skin hydrated without being too heavy or too light." },
+      { "name": "Ultra Light Daily UV Defense SPF 50", "brand": "Kiehl's", "category": "sunscreen", "price_range": "$$$", "why": "Elegant finish with strong sun protection — works beautifully on normal skin." }
+    ]
+  }
+}
