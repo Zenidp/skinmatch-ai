@@ -20,7 +20,6 @@ export type SkinAnalysisResult = {
   concerns: SkinConcern[];
   scores: Record<string, number>;
   source: "perfectcorp";
-  _debug_raw?: Record<string, { ui_score: number; raw_score: number }> | null;
 };
 
 // Concerns to request from Perfect Corp (SD actions — valid for images with short side >= 480px)
@@ -141,13 +140,22 @@ async function createTask(apiKey: string, fileId: string): Promise<string> {
 
 // ─── Step 4: Poll until task complete ─────────────────────────────────────────
 
+// Actual shape returned by Perfect Corp API
+type OutputItem = {
+  type: string;
+  ui_score?: number;
+  raw_score?: number;
+  mask_urls?: string[];
+  skin_type?: string; // present when type === "skin_type"
+  region?: string;    // "whole" | "t_zone" | "u_zone"
+  score?: number;     // present for type === "all" | "skin_age"
+  url: null;
+};
+
 type TaskData = {
   task_status: "running" | "success" | "error";
   error?: string;
-  results: Record<
-    string,
-    { ui_score: number; raw_score: number; mask_urls?: string[] }
-  > | null;
+  results: { output: OutputItem[] } | null;
 };
 
 type TaskPollResponse = {
@@ -190,66 +198,65 @@ function isSkinType(v: string): v is SkinType {
   return SKIN_TYPES.has(v as SkinType);
 }
 
-// ─── Score → SkinType inference ───────────────────────────────────────────────
+// ─── Parse output array from Perfect Corp ─────────────────────────────────────
 
-function inferSkinType(scores: Record<string, number>): SkinType {
-  const oiliness = scores["oiliness"] ?? 0;
-  const acne = scores["acne"] ?? 0;
-  const texture = scores["texture"] ?? 0;
-  const redness = scores["redness"] ?? 0;
+const CONCERN_MAP: Record<string, SkinConcern> = {
+  acne: "acne",
+  wrinkle: "wrinkles",
+  pore: "pores",
+  texture: "texture",
+  dark_circle_v2: "dark_circles",
+  redness: "redness",
+  age_spot: "dark_spots",
+  oiliness: "oiliness",
+};
 
-  // Acne-prone or very oily
-  if (acne > 45 || oiliness > 50) return "oily";
-  // Sensitive: noticeable redness, low oiliness
-  if (redness > 45 && oiliness < 30) return "sensitive";
-  // Combination: moderate oiliness (T-zone pattern)
-  if (oiliness > 28 && oiliness <= 50) return "combination";
-  // Clearly normal: all concerns low
-  if (oiliness < 20 && acne < 20 && texture < 20) return "normal";
+const CONCERN_THRESHOLD = 30;
 
-  return "dry";
-}
-
-function inferSkinTone(scores: Record<string, number>): string {
-  const darkCircle = scores["dark_circle"] ?? 0;
-  if (darkCircle > 60) return "Deep";
-  if (darkCircle > 40) return "Medium-Dark";
-  if (darkCircle > 20) return "Medium";
-  return "Light-Medium";
-}
-
-function parseConcerns(results: TaskData["results"] | undefined): {
+function parseOutput(output: OutputItem[]): {
   concerns: SkinConcern[];
   scores: Record<string, number>;
+  skin_type: SkinType;
+  skin_tone: string;
 } {
   const scores: Record<string, number> = {};
   const concerns: SkinConcern[] = [];
 
-  if (!results) return { concerns, scores };
-
-  const CONCERN_MAP: Record<string, SkinConcern> = {
-    acne: "acne",
-    wrinkle: "wrinkles",
-    pore: "pores",
-    texture: "texture",
-    dark_circle_v2: "dark_circles",
-    redness: "redness",
-    age_spot: "dark_spots",
-    oiliness: "oiliness",
-  };
-
-  const CONCERN_THRESHOLD = 30; // ui_score above this = concern detected
-
-  for (const [action, data] of Object.entries(results)) {
-    const uiScore = data.ui_score ?? 0;
-    scores[action] = uiScore;
-    const mapped = CONCERN_MAP[action];
-    if (mapped && uiScore > CONCERN_THRESHOLD) {
-      concerns.push(mapped);
+  for (const item of output) {
+    if (item.ui_score !== undefined && item.type in CONCERN_MAP) {
+      scores[item.type] = item.ui_score;
+      if (item.ui_score > CONCERN_THRESHOLD) {
+        concerns.push(CONCERN_MAP[item.type]);
+      }
     }
   }
 
-  return { concerns, scores };
+  // Use skin_type from Perfect Corp directly (region: "whole")
+  const skinTypeItem = output.find(i => i.type === "skin_type" && i.region === "whole");
+  const apiSkinType = skinTypeItem?.skin_type?.toLowerCase() ?? "";
+  const skin_type: SkinType = isSkinType(apiSkinType) ? apiSkinType : inferSkinTypeFromScores(scores);
+
+  // Infer skin tone from dark_circle_v2 score
+  const darkCircle = scores["dark_circle_v2"] ?? 0;
+  let skin_tone = "Light-Medium";
+  if (darkCircle > 70) skin_tone = "Deep";
+  else if (darkCircle > 50) skin_tone = "Medium-Dark";
+  else if (darkCircle > 30) skin_tone = "Medium";
+
+  return { concerns, scores, skin_type, skin_tone };
+}
+
+// Fallback if Perfect Corp doesn't return skin_type
+function inferSkinTypeFromScores(scores: Record<string, number>): SkinType {
+  const oiliness = scores["oiliness"] ?? 0;
+  const acne = scores["acne"] ?? 0;
+  const redness = scores["redness"] ?? 0;
+
+  if (acne > 45 || oiliness > 50) return "oily";
+  if (redness > 45 && oiliness < 30) return "sensitive";
+  if (oiliness > 28) return "combination";
+  if (oiliness < 20 && acne < 20) return "normal";
+  return "dry";
 }
 
 // ─── Main export ──────────────────────────────────────────────────────────────
@@ -280,25 +287,14 @@ export async function analyzeSkin(imageFile: File): Promise<SkinAnalysisResult> 
   // Step 4: Poll for result
   const taskResult = await pollTask(apiKey, taskId);
 
-  // DEBUG: log raw Perfect Corp response to see actual skin_type format
-  console.log("[PerfectCorp raw results]", JSON.stringify(taskResult.results, null, 2));
-
-  // Parse into our format
-  const { concerns, scores } = parseConcerns(taskResult.results);
-
-  // Perfect Corp may return skin_type directly as a score key with a label
-  const apiSkinType = taskResult.results?.["skin_type"];
-  const skinType: SkinType =
-    apiSkinType && isSkinType(String(apiSkinType.ui_score))
-      ? (String(apiSkinType.ui_score) as SkinType)
-      : inferSkinType(scores);
+  const output = taskResult.results?.output ?? [];
+  const { concerns, scores, skin_type, skin_tone } = parseOutput(output);
 
   return {
-    skin_type: skinType,
-    skin_tone: inferSkinTone(scores),
+    skin_type,
+    skin_tone,
     concerns,
     scores,
     source: "perfectcorp",
-    _debug_raw: taskResult.results,
   };
 }
