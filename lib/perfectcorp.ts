@@ -192,14 +192,14 @@ function inferSkinType(scores: Record<string, number>): SkinType {
   const texture = scores["texture"] ?? 0;
   const redness = scores["redness"] ?? 0;
 
-  // High oiliness + acne → oily / acne-prone
-  if (oiliness > 60 || acne > 60) return "oily";
-  // High redness with low oiliness → sensitive
-  if (redness > 60 && oiliness < 30) return "sensitive";
-  // Low scores across the board → normal
-  if (oiliness < 25 && acne < 25 && texture < 25) return "normal";
-  // Mixed oily T-zone pattern
-  if (oiliness > 35 && oiliness < 60) return "combination";
+  // Acne-prone or very oily
+  if (acne > 45 || oiliness > 50) return "oily";
+  // Sensitive: noticeable redness, low oiliness
+  if (redness > 45 && oiliness < 30) return "sensitive";
+  // Combination: moderate oiliness (T-zone pattern)
+  if (oiliness > 28 && oiliness <= 50) return "combination";
+  // Clearly normal: all concerns low
+  if (oiliness < 20 && acne < 20 && texture < 20) return "normal";
 
   return "dry";
 }
@@ -232,7 +232,7 @@ function parseConcerns(results: TaskData["results"] | undefined): {
     oiliness: "oiliness",
   };
 
-  const CONCERN_THRESHOLD = 40; // ui_score above this = concern detected
+  const CONCERN_THRESHOLD = 30; // ui_score above this = concern detected
 
   for (const [action, data] of Object.entries(results)) {
     const uiScore = data.ui_score ?? 0;
