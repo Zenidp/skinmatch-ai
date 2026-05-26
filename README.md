@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/hero.png" alt="SkinMatch AI Hero" width="800" style="border-radius: 16px;" />
+<img src="public/banner.png" alt="SkinMatch AI — Personalized skincare for every skin, every climate" width="800" style="border-radius: 16px;" />
 
 # ✨ SkinMatch AI
 
