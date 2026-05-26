@@ -24,10 +24,42 @@ export default function CameraCapture() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const capturePhoto = useCallback(() => {
+  // Normalize any image source to JPEG, enforce min 640px short side, max 1920px long side
+  const normalizeToJpeg = (src: string): Promise<string> =>
+    new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const MIN = 640;
+        const MAX = 1920;
+        let w = img.naturalWidth;
+        let h = img.naturalHeight;
+        // Scale down if too large
+        if (w > MAX || h > MAX) {
+          if (w >= h) { h = Math.round((h * MAX) / w); w = MAX; }
+          else { w = Math.round((w * MAX) / h); h = MAX; }
+        }
+        // Scale up if too small for Perfect Corp (min 480px short side, we use 640 for safety)
+        const short = Math.min(w, h);
+        if (short < MIN) {
+          const scale = MIN / short;
+          w = Math.round(w * scale);
+          h = Math.round(h * scale);
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", 0.88));
+      };
+      img.onerror = () => resolve(src); // fallback: use original
+      img.src = src;
+    });
+
+  const capturePhoto = useCallback(async () => {
     const screenshot = webcamRef.current?.getScreenshot();
     if (screenshot) {
-      setPreviewSrc(screenshot);
+      const normalized = await normalizeToJpeg(screenshot);
+      setPreviewSrc(normalized);
       setMode("preview");
     }
   }, []);
@@ -39,26 +71,21 @@ export default function CameraCapture() {
     const objectUrl = URL.createObjectURL(file);
     const img = new Image();
 
-    img.onload = () => {
-      // Resize to max 1920px on longest side to keep file small
-      const MAX = 1920;
-      let { naturalWidth: w, naturalHeight: h } = img;
-      if (w > MAX || h > MAX) {
-        if (w >= h) { h = Math.round((h * MAX) / w); w = MAX; }
-        else { w = Math.round((w * MAX) / h); h = MAX; }
-      }
-      const canvas = document.createElement("canvas");
-      canvas.width = w;
-      canvas.height = h;
-      canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
-      // Convert to JPEG — handles HEIC, WebP, PNG, etc.
-      setPreviewSrc(canvas.toDataURL("image/jpeg", 0.85));
-      setMode("preview");
+    img.onload = async () => {
       URL.revokeObjectURL(objectUrl);
+      const normalized = await normalizeToJpeg(
+        (() => {
+          const c = document.createElement("canvas");
+          c.width = img.naturalWidth; c.height = img.naturalHeight;
+          c.getContext("2d")!.drawImage(img, 0, 0);
+          return c.toDataURL("image/jpeg", 0.88);
+        })()
+      );
+      setPreviewSrc(normalized);
+      setMode("preview");
     };
 
     img.onerror = () => {
-      // Fallback: read as-is if canvas fails
       URL.revokeObjectURL(objectUrl);
       const reader = new FileReader();
       reader.onload = (ev) => {
@@ -82,7 +109,10 @@ export default function CameraCapture() {
       formData.append("image", blob, "face.jpg");
 
       const analyzeRes = await fetch("/api/analyze", { method: "POST", body: formData });
-      if (!analyzeRes.ok) throw new Error("Skin analysis failed");
+      if (!analyzeRes.ok) {
+        const errJson = await analyzeRes.json().catch(() => ({}));
+        throw new Error(errJson.error || `Analysis failed (${analyzeRes.status})`);
+      }
       const skinData = await analyzeRes.json();
 
       const routineRes = await fetch("/api/routine", {
