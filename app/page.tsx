@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   Sparkles,
   Camera,
@@ -10,9 +11,6 @@ import {
   Globe,
   ArrowRight,
   Star,
-  Droplets,
-  Sun,
-  Moon,
 } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
@@ -48,83 +46,6 @@ const floatingCards = [
   { label: "CeraVe Cleanser", sub: "$ • Recommended", bg: "bg-emerald-50/90", border: "border-emerald-200", labelColor: "text-emerald-800", subColor: "text-emerald-500", top: "18%", right: "0%" },
   { label: "Routine ready", sub: "5 + 4 steps", bg: "bg-amber-50/90", border: "border-amber-200", labelColor: "text-amber-800", subColor: "text-amber-500", bottom: "18%", right: "0%" },
 ];
-
-function HeroVisual() {
-  return (
-    <div className="relative w-full h-full flex items-center justify-center select-none">
-      {/* Decorative rings */}
-      {[160, 220, 280].map((size, i) => (
-        <motion.div
-          key={size}
-          className="absolute rounded-full border border-rose-200/60"
-          style={{ width: size, height: size }}
-          animate={{ rotate: i % 2 === 0 ? 360 : -360, scale: [1, 1.03, 1] }}
-          transition={{ rotate: { duration: 14 + i * 4, repeat: Infinity, ease: "linear" }, scale: { duration: 3 + i, repeat: Infinity, ease: "easeInOut" } }}
-        />
-      ))}
-
-      {/* Central orb */}
-      <motion.div
-        className="relative w-36 h-36 rounded-full flex items-center justify-center z-10"
-        animate={{ y: [-6, 6, -6] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <div className="absolute inset-0 rounded-full bg-linear-to-br from-rose-400 to-pink-500 blur-xl opacity-40" />
-        <div className="absolute inset-0 rounded-full bg-linear-to-br from-rose-400 to-pink-500" />
-        <div className="relative flex flex-col items-center">
-          <Sparkles className="w-8 h-8 text-white mb-1" />
-          <span className="text-white text-[10px] font-semibold tracking-wide">SkinMatch</span>
-        </div>
-        {[1, 2].map((n) => (
-          <motion.div
-            key={n}
-            className="absolute inset-0 rounded-full border-2 border-rose-400/50"
-            animate={{ scale: [1, 1.9, 1.9], opacity: [0.7, 0, 0] }}
-            transition={{ duration: 2.5, repeat: Infinity, delay: n * 0.8, ease: "easeOut" }}
-          />
-        ))}
-      </motion.div>
-
-      {/* Orbiting icons */}
-      {[
-        { icon: <Sun className="w-4 h-4 text-amber-500" />, angle: 0 },
-        { icon: <Moon className="w-4 h-4 text-purple-500" />, angle: 120 },
-        { icon: <Droplets className="w-4 h-4 text-emerald-500" />, angle: 240 },
-      ].map(({ icon, angle }, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-9 h-9 rounded-full bg-white shadow-md border border-gray-100 flex items-center justify-center"
-          animate={{ rotate: [angle, angle + 360] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          style={{
-            top: `calc(50% - 18px + ${Math.sin((angle * Math.PI) / 180) * 110}px)`,
-            left: `calc(50% - 18px + ${Math.cos((angle * Math.PI) / 180) * 110}px)`,
-          }}
-        >
-          {icon}
-        </motion.div>
-      ))}
-
-      {/* Floating info cards */}
-      {floatingCards.map((card, i) => (
-        <motion.div
-          key={card.label}
-          className={`absolute backdrop-blur-sm ${card.bg} border ${card.border} rounded-xl px-3 py-2 min-w-max shadow-sm`}
-          style={{ top: card.top, left: card.left, right: card.right, bottom: card.bottom }}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: [0, -4, 0] }}
-          transition={{
-            opacity: { delay: 0.8 + i * 0.2, duration: 0.5 },
-            y: { duration: 3 + i * 0.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.4 },
-          }}
-        >
-          <p className={`text-xs font-semibold leading-tight ${card.labelColor}`}>{card.label}</p>
-          <p className={`text-[10px] mt-0.5 ${card.subColor}`}>{card.sub}</p>
-        </motion.div>
-      ))}
-    </div>
-  );
-}
 
 /* ── PAGE ─────────────────────────────────────────────────────── */
 
@@ -227,15 +148,37 @@ export default function LandingPage() {
             </motion.div>
           </motion.div>
 
-          {/* Right — animated hero visual */}
+          {/* Right — hero image */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, delay: 0.3 }}
-            className="relative h-120 lg:h-150 rounded-3xl overflow-hidden"
+            className="relative h-120 lg:h-150 rounded-3xl overflow-hidden shadow-2xl shadow-rose-200/40"
           >
-            <div className="absolute inset-0 rounded-3xl bg-white/30 backdrop-blur-sm border border-white/60" />
-            <HeroVisual />
+            <Image
+              src="/hero.png"
+              alt="AI skin analysis"
+              fill
+              className="object-cover object-center"
+              priority
+            />
+            {/* Floating info cards */}
+            {floatingCards.map((card, i) => (
+              <motion.div
+                key={card.label}
+                className={`absolute backdrop-blur-sm ${card.bg} border ${card.border} rounded-xl px-3 py-2 min-w-max shadow-sm`}
+                style={{ top: card.top, left: card.left, right: card.right, bottom: card.bottom }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: [0, -4, 0] }}
+                transition={{
+                  opacity: { delay: 0.8 + i * 0.2, duration: 0.5 },
+                  y: { duration: 3 + i * 0.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.4 },
+                }}
+              >
+                <p className={`text-xs font-semibold leading-tight ${card.labelColor}`}>{card.label}</p>
+                <p className={`text-[10px] mt-0.5 ${card.subColor}`}>{card.sub}</p>
+              </motion.div>
+            ))}
           </motion.div>
         </div>
 
