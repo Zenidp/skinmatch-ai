@@ -274,6 +274,9 @@ export async function analyzeSkin(imageFile: File): Promise<SkinAnalysisResult> 
   // Step 4: Poll for result
   const taskResult = await pollTask(apiKey, taskId);
 
+  // DEBUG: log raw Perfect Corp response to see actual skin_type format
+  console.log("[PerfectCorp raw results]", JSON.stringify(taskResult.results, null, 2));
+
   // Parse into our format
   const { concerns, scores } = parseConcerns(taskResult.results);
 
